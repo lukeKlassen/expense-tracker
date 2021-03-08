@@ -3,8 +3,11 @@ package com.expenses.core.controller.impl;
 import com.expenses.core.dto.ExpenseDTO;
 import com.expenses.core.dto.ScheduledPaymentDTO;
 import com.expenses.core.dto.ShowExpensesResponseDTO;
+import com.expenses.core.mapper.ExpenseMapper;
+import com.expenses.core.model.Expense;
 import com.expenses.core.service.ExpenseService;
 import com.expenses.core.service.impl.ExpenseValidationServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -15,12 +18,20 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.websocket.server.PathParam;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class ExpenseController {
 
+    @Autowired
     private ExpenseValidationServiceImpl expenseValidationService;
+    @Autowired
     private ExpenseService expenseService;
+    @Autowired
+    private ExpenseMapper expenseMapper;
+
 
     @PutMapping(value = "/schedulePayment")
     @ResponseBody
@@ -31,28 +42,46 @@ public class ExpenseController {
 
     @PutMapping(value = "/addExpense")
     @ResponseBody
-    public String addExpense(@RequestBody ExpenseDTO expense)
+    public String addExpense(@RequestBody ExpenseDTO expenseDTO)
     {
-        String validationErrors = expenseValidationService.validateExpenseDTO(expense);
+        String validationErrors = expenseValidationService.validateExpenseDTO(expenseDTO);
         if(!validationErrors.equals(""))
         {
             return validationErrors;
         }
         else
         {
-            
+            Expense expense = expenseMapper.fromExpenseDTO(expenseDTO);
+            expenseService.addExpense(expense);
+            return expense.toString();
         }
     }
 
     @RequestMapping(value = "/showExpenses")
-    public ResponseEntity<ShowExpensesResponseDTO> showAllExpenses()
+    public ResponseEntity<List<ExpenseDTO>> showAllExpenses()
     {
-        return null;
+//        List<Expense> expenses = new ArrayList<>(expenseService.findAll());
+//        if(expenses.isEmpty()){
+//            return ResponseEntity.notFound().build();
+//        }
+
+        return ResponseEntity.ok().body(expenseService.findAll().stream().map((Expense expense) ->
+                expenseMapper.fromExpense(expense)).collect(Collectors.toList()));
     }
 
     @DeleteMapping(value = "/removeExpense")
-    public void removeExpense(@RequestParam(value = "uploadId") String uploadId){
-
+    public String removeExpense(@RequestBody ExpenseDTO expenseDTO){
+        String expenseExistsErrors = expenseValidationService.checkExpenseExists(expenseDTO);
+        if(!expenseExistsErrors.equals(""))
+        {
+            return expenseExistsErrors;
+        }
+        else
+        {
+            Expense expense = expenseMapper.fromExpenseDTO(expenseDTO);
+            expenseService.removeExpense(expense);
+            return "Expense successfully removed";
+        }
     }
 
 }

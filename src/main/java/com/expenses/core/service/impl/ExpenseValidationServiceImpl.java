@@ -2,7 +2,9 @@ package com.expenses.core.service.impl;
 
 import com.expenses.core.dto.ExpenseDTO;
 import com.expenses.core.service.ExpenseValidationService;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ExpenseValidationServiceImpl implements ExpenseValidationService {
 
     @Override
@@ -27,5 +29,10 @@ public class ExpenseValidationServiceImpl implements ExpenseValidationService {
             return true;
         }
         return false;
+    }
+
+    public String checkExpenseExists(ExpenseDTO expense)
+    {
+        return "";
     }
 }

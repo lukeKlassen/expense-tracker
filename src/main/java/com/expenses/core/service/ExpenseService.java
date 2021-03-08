@@ -12,6 +12,9 @@ public interface ExpenseService {
      */
     void addExpense(Expense expense);
 
+    void removeExpense(Expense expense);
+
+    List<Expense> findAll();
     /**
      * Returns a list of all the spending categories and how much is spent in them monthly and on
      * a one-time basis. Includes all scheduled expenses that have occurred since being added
