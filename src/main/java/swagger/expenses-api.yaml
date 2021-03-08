@@ -1,0 +1,60 @@
+openapi: 3.0.0
+info:
+  title: Expenses API
+  description: APIs to get and set the expenses in various spending catagories
+  version: 1.0.0
+servers:
+  - url: 'https'
+paths:
+  /addExpense:
+    parameters:
+      - name: category
+        in: query
+        schema:
+            $ref: '#/components/schemas/SpendingCategory'
+        description: Category to which the expense belongs
+      - name: schedule
+        in: query
+        schema:
+          type: string
+    post:
+      summary: Add Expense by given shedule
+      operationId: addExpense
+      responses:
+        200:
+          description: Expense is successfully created
+        400:
+          description: Error in adding the Expense
+  /showExpenses:
+    get:
+      summary: Show expenses in all catagories
+      operationId: showExpenses
+      responses:
+        200:
+          description: Expenses are successfuly returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FetchExpensesResponse'
+        400:
+          description: Error in fetching Expenses
+
+components:
+  schemas:
+    SpendingCategory:
+      type: object
+      description: One category of things that money may be spent on, and the given amount spent
+      example: Rent, 500.00
+      properties:
+        categoryName:
+          type: string
+        amount:
+          type: string
+    FetchExpensesResponse:
+      type: object
+      description: returned list of expenses from /showExpenses
+      properties:
+        catagoryList:
+          type: List
+          items:
+            $ref: '#/components/schemas/SpendingCategory'

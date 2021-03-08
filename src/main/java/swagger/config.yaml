@@ -1,0 +1,8 @@
+interfaceOnly: true
+java8: true
+dateLibrary: java8
+sourceFolder: web/gensrc
+singleContentTypes: true
+performBeanValidation: true
+delegatePattern: true
+useTags: true
