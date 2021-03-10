@@ -3,6 +3,7 @@ package com.expenses.core.service;
 import com.expenses.core.model.Expense;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ExpenseService {
 
@@ -10,9 +11,9 @@ public interface ExpenseService {
      * adds the expense to the list of all one time expenses for the given date
      * @param expense the expense to be added to the db
      */
-    void addExpense(Expense expense);
+    Expense addExpense(Expense expense);
 
-    void removeExpense(Expense expense);
+    int removeExpense(Expense expense);
 
     List<Expense> findAll();
     /**
@@ -20,5 +21,7 @@ public interface ExpenseService {
      * a one-time basis. Includes all scheduled expenses that have occurred since being added
      * @return a list of all dated expenses
      */
-    List<Expense> showExpenses();
+    Map<String, Double> getCategoryTotals();
+
+    Map<String, Double> getMonthlyTotals();
 }

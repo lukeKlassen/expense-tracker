@@ -31,8 +31,4 @@ public class ExpenseValidationServiceImpl implements ExpenseValidationService {
         return false;
     }
 
-    public String checkExpenseExists(ExpenseDTO expense)
-    {
-        return "";
-    }
 }

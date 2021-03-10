@@ -1,6 +1,7 @@
 package com.expenses.core.controller.impl;
 
 import com.expenses.core.dto.ExpenseDTO;
+import com.expenses.core.dto.ExpenseReportDTO;
 import com.expenses.core.dto.ScheduledPaymentDTO;
 import com.expenses.core.dto.ShowExpensesResponseDTO;
 import com.expenses.core.mapper.ExpenseMapper;
@@ -52,36 +53,34 @@ public class ExpenseController {
         else
         {
             Expense expense = expenseMapper.fromExpenseDTO(expenseDTO);
-            expenseService.addExpense(expense);
-            return expense.toString();
+            return expenseService.addExpense(expense).toString();
         }
     }
 
     @RequestMapping(value = "/showExpenses")
     public ResponseEntity<List<ExpenseDTO>> showAllExpenses()
     {
-//        List<Expense> expenses = new ArrayList<>(expenseService.findAll());
-//        if(expenses.isEmpty()){
-//            return ResponseEntity.notFound().build();
-//        }
-
         return ResponseEntity.ok().body(expenseService.findAll().stream().map((Expense expense) ->
                 expenseMapper.fromExpense(expense)).collect(Collectors.toList()));
     }
 
     @DeleteMapping(value = "/removeExpense")
     public String removeExpense(@RequestBody ExpenseDTO expenseDTO){
-        String expenseExistsErrors = expenseValidationService.checkExpenseExists(expenseDTO);
-        if(!expenseExistsErrors.equals(""))
-        {
-            return expenseExistsErrors;
-        }
-        else
-        {
-            Expense expense = expenseMapper.fromExpenseDTO(expenseDTO);
-            expenseService.removeExpense(expense);
+        Expense expense = expenseMapper.fromExpenseDTO(expenseDTO);
+        if(expenseService.removeExpense(expense) > 0)
             return "Expense successfully removed";
-        }
+        else
+            return "Error in removing expense - Expense could not be found";
+    }
+
+    @RequestMapping(value = "/getExpenseReport")
+    public ResponseEntity<ExpenseReportDTO> getExpenseReport()
+    {
+        ExpenseReportDTO expenseReport = new ExpenseReportDTO();
+        expenseReport.setCategoryTotals(expenseService.getCategoryTotals());
+        expenseReport.setMonthlyTotals(expenseService.getMonthlyTotals());
+
+        return ResponseEntity.ok().body(expenseReport);
     }
 
 }

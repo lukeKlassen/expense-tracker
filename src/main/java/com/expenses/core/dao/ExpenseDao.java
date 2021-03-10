@@ -13,6 +13,6 @@ public interface ExpenseDao extends CrudRepository<Expense, String>
 {
     @Modifying
     @Query("DELETE FROM Expense e WHERE (e.spendingCategory=:spendingCategory AND e.amount=:amount AND e.comment=:comment AND e.date=:date)")
-    void deleteByFields(@Param("spendingCategory") String spendingCategory, @Param("amount") double amount,
+    int deleteByFields(@Param("spendingCategory") String spendingCategory, @Param("amount") double amount,
                                  @Param("comment") String comment, @Param("date") String date);
 }
