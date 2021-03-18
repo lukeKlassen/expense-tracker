@@ -1,6 +1,8 @@
 package com.expenses.core.service.impl;
 
 import com.expenses.core.dao.ExpenseDao;
+import com.expenses.core.dto.MonthExpensesDTO;
+import com.expenses.core.dto.SpendingCategoryDTO;
 import com.expenses.core.model.Expense;
 import com.expenses.core.service.ExpenseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +41,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     @Override
-    public Map<String, Double> getCategoryTotals()
+    public List<SpendingCategoryDTO> getCategoryTotals()
     {
         List<Expense> expenses = findAll();
         Map<String, Double> categoryTotals = new HashMap<>();
@@ -55,12 +57,14 @@ public class ExpenseServiceImpl implements ExpenseService {
                 categoryTotals.replace(category, categoryTotals.get(category) + e.getAmount());
             }
         });
+        List<SpendingCategoryDTO> returnList = new ArrayList<>();
+        categoryTotals.forEach( (k,v) -> returnList.add(new SpendingCategoryDTO(k, v)));
 
-        return categoryTotals;
+        return returnList;
     }
 
     @Override
-    public Map<String, Double> getMonthlyTotals()
+    public List<MonthExpensesDTO> getMonthlyTotals()
     {
         List<Expense> expenses = findAll();
         Map<String, Double> monthlyTotals = new HashMap<>();
@@ -75,7 +79,8 @@ public class ExpenseServiceImpl implements ExpenseService {
                 }
             }
         });
-
-        return monthlyTotals;
+        List<MonthExpensesDTO> returnList = new ArrayList<>();
+        monthlyTotals.forEach( (k,v) -> returnList.add(new MonthExpensesDTO(k, v)));
+        return returnList;
     }
 }

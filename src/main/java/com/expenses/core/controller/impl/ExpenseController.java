@@ -2,14 +2,17 @@ package com.expenses.core.controller.impl;
 
 import com.expenses.core.dto.ExpenseDTO;
 import com.expenses.core.dto.ExpenseReportDTO;
+import com.expenses.core.dto.MonthExpensesDTO;
 import com.expenses.core.dto.ScheduledPaymentDTO;
 import com.expenses.core.dto.ShowExpensesResponseDTO;
+import com.expenses.core.dto.SpendingCategoryDTO;
 import com.expenses.core.mapper.ExpenseMapper;
 import com.expenses.core.model.Expense;
 import com.expenses.core.service.ExpenseService;
 import com.expenses.core.service.impl.ExpenseValidationServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,6 +44,7 @@ public class ExpenseController {
         //TODO: implement scheduled payments
     }
 
+    @CrossOrigin(origins = "http://localhost:63342")
     @PutMapping(value = "/addExpense")
     @ResponseBody
     public String addExpense(@RequestBody ExpenseDTO expenseDTO)
@@ -57,11 +61,14 @@ public class ExpenseController {
         }
     }
 
+    @CrossOrigin(origins = "http://localhost:63342")
     @RequestMapping(value = "/showExpenses")
     public ResponseEntity<List<ExpenseDTO>> showAllExpenses()
     {
-        return ResponseEntity.ok().body(expenseService.findAll().stream().map((Expense expense) ->
-                expenseMapper.fromExpense(expense)).collect(Collectors.toList()));
+        List<ExpenseDTO> expenses = expenseService.findAll().stream().map((Expense expense) ->
+                expenseMapper.fromExpense(expense)).collect(Collectors.toList());
+        expenses.sort((e1, e2) -> compareDates(e1.getDate(), e2.getDate()));
+        return ResponseEntity.ok().body(expenses);
     }
 
     @DeleteMapping(value = "/removeExpense")
@@ -73,14 +80,30 @@ public class ExpenseController {
             return "Error in removing expense - Expense could not be found";
     }
 
+    @CrossOrigin(origins = "http://localhost:63342")
     @RequestMapping(value = "/getExpenseReport")
     public ResponseEntity<ExpenseReportDTO> getExpenseReport()
     {
         ExpenseReportDTO expenseReport = new ExpenseReportDTO();
-        expenseReport.setCategoryTotals(expenseService.getCategoryTotals());
-        expenseReport.setMonthlyTotals(expenseService.getMonthlyTotals());
+        List<SpendingCategoryDTO> sortedSpendingCategories = expenseService.getCategoryTotals();
+        sortedSpendingCategories.sort((e1, e2) -> e1.getCategoryName().compareTo(e2.getCategoryName()));
+        expenseReport.setCategoryTotals(sortedSpendingCategories);
+
+        List<MonthExpensesDTO> sortedMonthlyExpenses = expenseService.getMonthlyTotals();
+        sortedMonthlyExpenses.sort((e1,e2) -> compareDates(e1.getDate(), e2.getDate()));
+        expenseReport.setMonthlyTotals(sortedMonthlyExpenses);
 
         return ResponseEntity.ok().body(expenseReport);
+    }
+
+    private int compareDates(String date1, String date2)
+    {
+        int year1 = Integer.parseInt(date1.substring(0,4))*100;
+        int year2 = Integer.parseInt(date2.substring(0,4))*100;
+        int month1 = Integer.parseInt(date1.substring(5,7));
+        int month2 = Integer.parseInt(date2.substring(5,7));
+
+        return year2+month2 - year1+month1;
     }
 
 }

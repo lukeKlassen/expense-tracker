@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="ExpenseSite.css">
+    <script src="ExpenseSite.js"></script>
+    <meta charset="UTF-8">
+    <title>Expense Tracker</title>
+</head>
+<body>
+    <h1 id="main_header"> Welcome to Luke's Expense Tracker </h1>
+    <button id="SwitchTableBtn" onclick="function showTables() {
+        if(document.getElementById(AllExpensesTable).style.display === 'none')
+        {
+            document.getElementById('expenseReport').style.display = 'none';
+            document.getElementById(AllExpensesTable).style.display = 'table'
+            document.getElementById('SwitchTableBtn').innerHTML = 'Show Expense Report';
+        }
+        else
+        {
+            document.getElementById('expenseReport').style.display = 'flex';
+            document.getElementById(AllExpensesTable).style.display = 'none'
+            document.getElementById('SwitchTableBtn').innerHTML = 'Show All Expenses';
+        }
+    }
+    showTables()">Show Expense Report</button>
+    <table id="AllExpensesTable">
+        <tr>
+            <th scope="col">Cost ($)</th>
+            <th scope="col">Spending Category</th>
+            <th scope="col">Date</th>
+            <th scope="col">Comment</th>
+        </tr>
+    </table>
+    <div class="row"  id="expenseReport" style="display: none;">
+        <table id="EpensesBySpendingCategory">
+            <tr>
+                <th scope="col">Spending Category</th>
+                <th scope="col">Cost</th>
+            </tr>
+        </table>
+        <table id="ExepensesByMonth">
+            <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Cost</th>
+            </tr>
+        </table>
+    </div>
+
+    <button id="ShowFormBtn" onclick="document.getElementById('popupform').style.display === 'none' ?
+        document.getElementById('popupform').style.display='block' : document.getElementById('popupform').style.display='none'">Add an Expense</button>
+    <div id="popupform" style="display: none">
+        <div class="container">
+            <label for="SpendingCategoryField"><b>Expense Category</b></label>
+            <input type="text" placeholder="Groceries" id="SpendingCategoryField" required>
+
+            <label for="AmountField"><b>Cost of Expense</b></label>
+            <input type="number" placeholder="25.67" id="AmountField" required>
+
+            <label for="CommentField"><b>Comment (Optional)</b></label>
+            <input type="text" placeholder="Apples were on sale" id="CommentField">
+
+            <button type="submit" onclick="submitExpense()">Submit Expense</button>
+        </div>
+    </div>
+</body>
+</html>

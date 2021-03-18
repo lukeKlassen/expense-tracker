@@ -1,6 +1,8 @@
 package com.expenses.core.service.impl;
 
 import com.expenses.core.dao.ExpenseDao;
+import com.expenses.core.dto.MonthExpensesDTO;
+import com.expenses.core.dto.SpendingCategoryDTO;
 import com.expenses.core.model.Expense;
 import org.junit.Assert;
 import org.junit.Test;
@@ -103,12 +105,11 @@ public class ExpenseServiceImplTest {
         expenseList.add(e3);
         expenseList.add(e4);
         Mockito.when(expenseDao.findAll()).thenReturn(expenseList);
-        Map<String, Double> returnedCategoryTotals = expenseService.getCategoryTotals();
-        Assert.assertTrue(returnedCategoryTotals.get("groceries") > -0.01 & returnedCategoryTotals.get("groceries") < 0.01);
 
-        Assert.assertTrue(returnedCategoryTotals.get("rent") > 10000000.53 & returnedCategoryTotals.get("groceries") <10000000.55);
+        List<SpendingCategoryDTO> returnedMonthlyTotals = expenseService.getCategoryTotals();
+        Assert.assertTrue(returnedMonthlyTotals.indexOf(new SpendingCategoryDTO("groceries", 0.00)) != -1);
 
-        assertEquals(0, (double) returnedCategoryTotals.get(""), 0.0);
+        Assert.assertTrue(returnedMonthlyTotals.indexOf(new SpendingCategoryDTO("rent", 1000000.54)) != -1);
     }
 
     @Test
@@ -132,11 +133,9 @@ public class ExpenseServiceImplTest {
         expenseList.add(e3);
         expenseList.add(e4);
         Mockito.when(expenseDao.findAll()).thenReturn(expenseList);
-        Map<String, Double> returnedMonthlyTotals = expenseService.getMonthlyTotals();
-        Assert.assertTrue(returnedMonthlyTotals.get("2021-03") > -0.01 & returnedMonthlyTotals.get("2021-03") < 0.01);
+        List<MonthExpensesDTO> returnedMonthlyTotals = expenseService.getMonthlyTotals();
+        Assert.assertTrue(returnedMonthlyTotals.indexOf(new MonthExpensesDTO("2021-03", 0.00)) != -1);
 
-        Assert.assertTrue(returnedMonthlyTotals.get("1998-12") > 10000000.53 & returnedMonthlyTotals.get("1998-12") <10000000.55);
-
-        assertNull(returnedMonthlyTotals.get(""));
+        Assert.assertTrue(returnedMonthlyTotals.indexOf(new MonthExpensesDTO("1998-12", 1000000.54)) != -1);
     }
 }

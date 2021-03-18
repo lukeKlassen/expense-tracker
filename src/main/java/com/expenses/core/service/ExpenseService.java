@@ -1,5 +1,7 @@
 package com.expenses.core.service;
 
+import com.expenses.core.dto.MonthExpensesDTO;
+import com.expenses.core.dto.SpendingCategoryDTO;
 import com.expenses.core.model.Expense;
 
 import java.util.List;
@@ -21,7 +23,7 @@ public interface ExpenseService {
      * a one-time basis. Includes all scheduled expenses that have occurred since being added
      * @return a list of all dated expenses
      */
-    Map<String, Double> getCategoryTotals();
+   List<SpendingCategoryDTO> getCategoryTotals();
 
-    Map<String, Double> getMonthlyTotals();
+    List<MonthExpensesDTO> getMonthlyTotals();
 }
