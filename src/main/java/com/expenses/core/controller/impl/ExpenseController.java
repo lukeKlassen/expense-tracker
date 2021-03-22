@@ -11,21 +11,27 @@ import com.expenses.core.model.Expense;
 import com.expenses.core.service.ExpenseService;
 import com.expenses.core.service.impl.ExpenseValidationServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.websocket.server.PathParam;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@CrossOrigin(origins = "*", maxAge = 3600L)
 @RestController
 public class ExpenseController {
 
@@ -44,24 +50,25 @@ public class ExpenseController {
         //TODO: implement scheduled payments
     }
 
-    @CrossOrigin(origins = "http://localhost:63342")
-    @PutMapping(value = "/addExpense")
+    @PutMapping( value= "/addExpense")
     @ResponseBody
-    public String addExpense(@RequestBody ExpenseDTO expenseDTO)
+    public ResponseEntity<String> addExpense(@RequestBody ExpenseDTO expenseDTO)
     {
+        HttpHeaders responseHeaders = new HttpHeaders();
+        //responseHeaders.set("Access-Control-Allow-Origin", "*");
+
         String validationErrors = expenseValidationService.validateExpenseDTO(expenseDTO);
         if(!validationErrors.equals(""))
         {
-            return validationErrors;
+            return ResponseEntity.badRequest().headers(responseHeaders).body(validationErrors);
         }
         else
         {
             Expense expense = expenseMapper.fromExpenseDTO(expenseDTO);
-            return expenseService.addExpense(expense).toString();
+            return ResponseEntity.ok().headers(responseHeaders).body(expenseService.addExpense(expense).toString());
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:63342")
     @RequestMapping(value = "/showExpenses")
     public ResponseEntity<List<ExpenseDTO>> showAllExpenses()
     {
@@ -80,7 +87,6 @@ public class ExpenseController {
             return "Error in removing expense - Expense could not be found";
     }
 
-    @CrossOrigin(origins = "http://localhost:63342")
     @RequestMapping(value = "/getExpenseReport")
     public ResponseEntity<ExpenseReportDTO> getExpenseReport()
     {
@@ -98,12 +104,22 @@ public class ExpenseController {
 
     private int compareDates(String date1, String date2)
     {
-        int year1 = Integer.parseInt(date1.substring(0,4))*100;
-        int year2 = Integer.parseInt(date2.substring(0,4))*100;
-        int month1 = Integer.parseInt(date1.substring(5,7));
-        int month2 = Integer.parseInt(date2.substring(5,7));
+        if(date1.length() == 7) {
+            int year1 = Integer.parseInt(date1.substring(0, 4)) * 100;
+            int year2 = Integer.parseInt(date2.substring(0, 4)) * 100;
+            int month1 = Integer.parseInt(date1.substring(5, 7));
+            int month2 = Integer.parseInt(date2.substring(5, 7));
 
-        return year2+month2 - year1+month1;
+            return (year2 + month2) - (year1 +month1);
+        }else{
+            int year1 = Integer.parseInt(date1.substring(0, 4)) * 10000;
+            int year2 = Integer.parseInt(date2.substring(0, 4)) * 10000;
+            int month1 = Integer.parseInt(date1.substring(5, 7)) * 100;
+            int month2 = Integer.parseInt(date2.substring(5, 7)) * 100;
+            int day1 = Integer.parseInt(date1.substring(8,10));
+            int day2 = Integer.parseInt(date2.substring(8,10));
+
+            return (year2 + month2 + day2) - (year1 +month1 + day1);
+        }
     }
-
 }

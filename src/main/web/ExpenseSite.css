@@ -9,6 +9,11 @@ p {
     color: black;
     font-family: Arial, Helvetica, sans-serif;
 }
+
+label {
+    text-align: center;
+    margin: auto;
+}
 #main_header {
     width: 80%;
     text-align: center;
@@ -52,13 +57,22 @@ button {
     margin: 20px auto 20px;
     display: block;
 }
-
+.deleteBtn {
+    padding: 1px;
+    margin: 0 auto;
+}
+.expenseReportRow {
+   display: flex;
+}
+.expenseReportDiv {
+    display: block;
+}
 /* On mouse-over */
 button:hover {background: #eee;}
 
 #popupform {
     background-color: #fefefe;
-    margin: 15% auto;
+    margin: 5% auto;
     border: 1px solid #888;
     width: 80%;
 }

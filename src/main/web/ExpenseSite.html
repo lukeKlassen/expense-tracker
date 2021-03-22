@@ -9,41 +9,52 @@
 <body>
     <h1 id="main_header"> Welcome to Luke's Expense Tracker </h1>
     <button id="SwitchTableBtn" onclick="function showTables() {
-        if(document.getElementById(AllExpensesTable).style.display === 'none')
+        if(document.getElementById('AllExpensesDiv').style.display === 'none')
         {
             document.getElementById('expenseReport').style.display = 'none';
-            document.getElementById(AllExpensesTable).style.display = 'table'
+            document.getElementById('AllExpensesDiv').style.display = 'table';
             document.getElementById('SwitchTableBtn').innerHTML = 'Show Expense Report';
         }
         else
         {
-            document.getElementById('expenseReport').style.display = 'flex';
-            document.getElementById(AllExpensesTable).style.display = 'none'
+            document.getElementById('expenseReport').style.display = 'block';
+            document.getElementById('AllExpensesDiv').style.display = 'none';
             document.getElementById('SwitchTableBtn').innerHTML = 'Show All Expenses';
         }
     }
-    showTables()">Show Expense Report</button>
-    <table id="AllExpensesTable">
-        <tr>
-            <th scope="col">Cost ($)</th>
-            <th scope="col">Spending Category</th>
-            <th scope="col">Date</th>
-            <th scope="col">Comment</th>
-        </tr>
-    </table>
-    <div class="row"  id="expenseReport" style="display: none;">
-        <table id="EpensesBySpendingCategory">
+    showTables()">Show All Expenses</button>
+    <div class="row" id="AllExpensesDiv" style="display: none;">
+        <label for="AllExpensesTable" style="display: block;">List of All Expenses</label>
+        <table id="AllExpensesTable" >
             <tr>
+                <th scope="col">Cost ($)</th>
                 <th scope="col">Spending Category</th>
-                <th scope="col">Cost</th>
-            </tr>
-        </table>
-        <table id="ExepensesByMonth">
-            <tr>
                 <th scope="col">Date</th>
-                <th scope="col">Cost</th>
+                <th scope="col">Comment</th>
+                <th scope="col">Delete Entry</th>
             </tr>
         </table>
+    </div>
+    <div class="row expenseReportDiv"  id="expenseReport" style="display: block;">
+        <div class="row expenseReportRow">
+            <label for="EpensesBySpendingCategory">Total Expenditure by Category</label>
+            <label for="ExepensesByMonth">Total Monthly Expenditure</label>
+        </div>
+        <div class="row expenseReportRow">
+            <table id="EpensesBySpendingCategory">
+                <tr>
+                    <th scope="col">Spending Category</th>
+                    <th scope="col">Cost</th>
+                </tr>
+            </table>
+
+            <table id="ExepensesByMonth">
+                <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Cost</th>
+                </tr>
+            </table>
+        </div>
     </div>
 
     <button id="ShowFormBtn" onclick="document.getElementById('popupform').style.display === 'none' ?
